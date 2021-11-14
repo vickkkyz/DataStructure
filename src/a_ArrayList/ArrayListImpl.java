@@ -115,7 +115,7 @@ public class ArrayListImpl<E> implements ArrayList<E> {
     @Override
     public void clear() {
         for (int i = 0; i < size; i++){
-            elements[i] = null;
+            elements[i] = null;//这里为啥要设置为null，直接size为0不可以吗？
         }
         size = 0;
     }
