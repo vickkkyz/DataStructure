@@ -97,9 +97,31 @@ public class ArrayListImpl<E> implements ArrayList<E> {
         }
         elements[size] = null;
         size--;
+        trim();
         return element;
     }
 
+    /**
+     * 缩容操作
+     */
+    private void trim(){
+        int capacity = elements.length;
+        System.out.println(capacity);
+        int newCapacity = capacity >> 1;
+        //当size大于等于将要缩小为的容量 或者新容量小于10的话，就不要再缩小啦！！
+
+        //等于的情况是为了防止复杂度震荡，当size等于元素个数时，扩容，复杂度为O(n)
+        // 然后remove在将这个元素删除，此时size=newCapacity，又会引发缩容，复杂度又是O(n),
+        //如果反复持续这种情况，一直缩容扩容，就是复杂度震荡
+        if(size >= newCapacity || newCapacity <= DEFAULT_CAPACITY) return;
+        //缩容扩容的比例相乘不为1，就可以不写等号
+        E newElements[] = (E[]) new Object[newCapacity];
+        for(int i = 0; i < size; i++){
+            newElements[i] = elements[i];
+        }
+        elements = newElements;
+        //System.out.println("缩容  旧容量为:"+capacity+",新容量为:"+newCapacity);
+    }
     @Override
     public E getElements(int index) {
         rangeCheck(index);

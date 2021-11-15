@@ -11,6 +11,9 @@ public class test {
         for(int i = 0; i < 11; i ++){
             list.add(i);
         }
+        /*for(int i = 0; i < 11; i ++){
+            list.remove(0);
+        }*/
         System.out.println(list.getIndex(9));
         list.remove(0);
         list.add(2,100);
@@ -19,6 +22,7 @@ public class test {
         System.out.println(list.getIndex(100));
         System.out.println(list.contains(null));
         System.out.println(list);
+
         list.clear();
         System.out.println(list.getIndex(100));
         System.out.println(list);
