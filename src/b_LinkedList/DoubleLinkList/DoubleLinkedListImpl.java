@@ -99,12 +99,14 @@ public class DoubleLinkedListImpl<E> implements LinkedList<E> {
 
     private Node<E> getNode(int index){
         rangeCheck(index);
-        Node<E> node = first;
+        Node<E> node;
         if(index < (size >> 1)){
+            node = first;
             for(int i = 0; i < index; i++){
                 node = node.next;
             }
         }else{
+            node = last;//更正：当从队列末尾开始遍历时，需要将结点node设置为last
             for(int i = size - 1; i > index; i--){
                 node = node.prev;
             }

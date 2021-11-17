@@ -6,7 +6,7 @@ package a_ArrayList;
  */
 public class ArrayListImpl<E> implements ArrayList<E> {
     private int size;//数组的元素个数
-    private E elements[];
+    private E[] elements;
     private static final int DEFAULT_CAPACITY = 10;
     public ArrayListImpl(){
         elements = (E[]) new Object[DEFAULT_CAPACITY];
@@ -106,7 +106,7 @@ public class ArrayListImpl<E> implements ArrayList<E> {
      */
     private void trim(){
         int capacity = elements.length;
-        System.out.println(capacity);
+        //System.out.println(capacity);
         int newCapacity = capacity >> 1;
         //当size大于等于将要缩小为的容量 或者新容量小于10的话，就不要再缩小啦！！
 
