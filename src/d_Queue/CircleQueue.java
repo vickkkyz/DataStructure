@@ -29,6 +29,8 @@ public class CircleQueue<E> implements Queue<E>{
     @Override
     public void enQueue(E element) {
         ensureCapacity(size);
+        //int index = size + front
+        //index = index - (index >= elements.length ? elements.length : 0);
         elements[(size + front)% elements.length] = element;
         size ++;
     }
@@ -49,7 +51,11 @@ public class CircleQueue<E> implements Queue<E>{
 
     @Override
     public void clear() {
+        for(int i = 0; i < size; i++){
+            elements[(front + i) % elements.length] = null;
+        }
         size = 0;
+        front = 0;
     }
 
     @Override
