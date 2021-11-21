@@ -1,6 +1,5 @@
 package e_BST;
 
-import e_BST.printer.BinaryTreeInfo;
 import e_BST.printer.BinaryTrees;
 
 import java.util.Comparator;
@@ -23,20 +22,28 @@ public class test {
         }
     }
     public static void main(String args[]){
-        Integer[] array = new Integer[]{5,88,7,4,16,25,43,20,10};
-        BST<Integer> bst = new BSTImpl<>();
+        Integer[] array = new Integer[]{5,3,4,1,8,2};
+        BSTImpl<Integer> bst = new BSTImpl<>();
         for(int i = 0; i < array.length; i++){
             bst.add(array[i]);
         }
-        BinaryTrees.println((BinaryTreeInfo) bst);
+        BinaryTrees.println(bst);
+        bst.nonRecursivePre();
+//        bst.inOrder();
+//        System.out.println("前驱"+bst.getElement(bst.predecessor(20)));
+//        System.out.println("后继"+bst.getElement(bst.successor(16)));
+//        bst.remove(25);
+//        BinaryTrees.println(bst);
+        //bst.remove();
+//        BinaryTrees.println(bst);
         System.out.println("前序:");
-        ((BSTImpl<Integer>) bst).preOrder();
-        System.out.println("中序:");
-        ((BSTImpl<Integer>) bst).inOrder();
-        System.out.println("后序:");
-        ((BSTImpl<Integer>) bst).postOrder();
-        System.out.println("层序:");
-        ((BSTImpl<Integer>) bst).levelOrder();
+        bst.preOrder();
+//        System.out.println("中序:");
+//        bst.inOrder();
+//        System.out.println("后序:");
+//        bst.postOrder();
+//        System.out.println("层序:");
+//        bst.levelOrder();
         /*
          当同一个类，如果实现了Comparable接口，需要在这个类中实现这个比较方法，对于同一个类，比较规则是一样的
          如果他们想实现不同的比较规则，就需要使用Comparator
@@ -58,7 +65,7 @@ public class test {
 //        bst.add(p4);
 //        bst.add(p5);
 //        bst.add(p6);
-//        BinaryTrees.println((BinaryTreeInfo) bst);
+//        BinaryTrees.println(bst);
 
     }
 }
