@@ -201,7 +201,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
      * 前序遍历 非递归
      */
     public void nonRecursivePre(){
-        nonRecursivePre(root);
+        nonRecursivePre2(root);
     }
     private void nonRecursivePre(Node<E> node){
         if(node == null){
@@ -217,6 +217,22 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
             }
             if(node1.left != null){
                 stack.push(node1.left);
+            }
+        }
+    }
+    private void nonRecursivePre2(Node<E> node){
+        if(node == null){
+            return;
+        }
+        Stack<Node<E>> stack = new StackImpl<>();
+        while(node != null ||!stack.isEmpty()){
+            if(node != null){
+                stack.push(node);
+                System.out.println(node.element);//先访问根节点
+                node = node.left;
+            }else{
+                node = stack.pop();
+                node = node.right;
             }
         }
     }
@@ -237,15 +253,22 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
     /**
      * 中序非递归
      */
-//    public void nonRecursiveIn(){
-//        nonRecursiveIn(root);
-//    }
-//    private void nonRecursiveIn(Node<E> node){
-//        if(node == null){
-//            return;
-//        }
-//
-//    }
+    public void nonRecursiveIn(){
+        nonRecursiveIn(root);
+    }
+    private void nonRecursiveIn(Node<E> node){
+        Stack<Node<E>> stack = new StackImpl<>();
+        while(node != null || !stack.isEmpty()){
+            if(node != null){
+                stack.push(node);
+                node = node.left;
+            }else{
+                node = stack.pop();
+                System.out.println(node.element);
+                node = node.right;
+            }
+        }
+    }
     /**
      * 后序遍历 递归
      */
@@ -256,11 +279,35 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
         if(node == null){
             return;
         }
-        preOrder(node.left);
-        preOrder(node.right);
+        postOrder(node.left);
+        postOrder(node.right);
         System.out.println(node.element);
     }
 
+    public void nonRecursivePost(){
+        nonRecursivePost(root);
+    }
+    private void nonRecursivePost(Node<E> node){
+        if(node == null) return;
+        Stack<Node<E>> stack = new StackImpl<>();
+        Node<E> pre = null;
+        while(node != null || !stack.isEmpty()){
+            if(node != null){
+                stack.push(node);
+                node = node.left;
+            }else{
+                node = stack.peek();
+                if(node.right != null && node.right != pre){//没有访问过它的右孩子
+                    node = node.right;
+                }else{
+                    node = stack.pop();
+                    System.out.println(node.element);
+                    pre = node;
+                    node = null;
+                }
+            }
+        }
+    }
     /**
      * 层序遍历 利用队列
      */
@@ -284,6 +331,79 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
             }
         }
     }
+
+    /**
+     * 求二叉树的高度  递归
+     */
+    public int height(){
+       //return height(root);
+        return nonRecursiveHeight(root);
+    }
+    private int height(Node<E> node){
+        if(node == null) return 0;
+        return 1 + Math.max(height(node.left),height(node.right));
+    }
+    private int nonRecursiveHeight(Node<E> node){
+        //只要判断出每层在哪里遍历完，就让二叉树的高度加1就行了
+        if(node == null) return 0;
+        Queue<Node<E>> queue = new QueueImpl<>();
+        queue.enQueue(node);
+        int height = 0;
+        int levelSize = 1;//当前层的节点个数，初始第一层只有根结点
+        while(!queue.isEmpty()){
+            Node<E> node1 = queue.deQueue();
+            levelSize --;
+            if(node1.left != null){
+                queue.enQueue(node1.left);
+            }
+            if(node1.right != null){
+                queue.enQueue(node1.right);
+            }
+            if(levelSize == 0){
+                levelSize = queue.size();
+                height++;
+            }
+        }
+        return height;
+    }
+    //判断是否为完全二叉树
+    //完全二叉树：若设二叉树的深度为k，除第 k层外，其它各层 (1～k-1)的结点数都达到最大个数，第k层所有的结点都连续集中在最左边，这就是完全二叉树。
+    public boolean isComplete(){
+        return isComplete(root);
+    }
+    private boolean isComplete(Node<E> node){
+        if (node == null) return false;
+        Queue<Node<E>> queue = new QueueImpl<>();
+        queue.enQueue(node);
+        boolean leaf = false;
+        while(!queue.isEmpty()){
+            Node<E> node1 = queue.deQueue();
+            if(leaf && !idLeaf(node1)){
+                return false;
+            }
+            if(node1.left != null){
+                queue.enQueue(node1.left);
+            }else{//node1.left == null
+                if(node1.right != null){//node1.right != null
+                    return false;
+                }
+            }
+            if(node1.right != null){
+                queue.enQueue(node1.right);
+            }else{//node1.right = null&& node1.left == null ||node1.right = null&& node1.left != null
+                leaf = true;
+            }
+        }
+        return false;
+    }
+    private boolean idLeaf(Node<E> node){
+        if(!hasTwoChildern(node)){
+            return node.left != null || node.right != null;
+        }
+        return false;
+    }
+    //----留坑 待实现二叉树的重构，比如已知中序和前序遍历 求后序遍历.
+
     @Override
     public void clear() {
         size = 0;

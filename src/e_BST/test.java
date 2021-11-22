@@ -3,6 +3,7 @@ package e_BST;
 import e_BST.printer.BinaryTrees;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * @Author qq
@@ -22,13 +23,23 @@ public class test {
         }
     }
     public static void main(String args[]){
-        Integer[] array = new Integer[]{5,3,4,1,8,2};
+//        Integer[] array = new Integer[]{5,3,4,1,8,2};
+//        BSTImpl<Integer> bst = new BSTImpl<>();
+//        for(int i = 0; i < array.length; i++){
+//            bst.add(array[i]);
+//        }
         BSTImpl<Integer> bst = new BSTImpl<>();
-        for(int i = 0; i < array.length; i++){
-            bst.add(array[i]);
+        for(int i = 0; i < 15; i++){
+            bst.add((int) (Math.random() * 100));
         }
         BinaryTrees.println(bst);
-        bst.nonRecursivePre();
+        System.out.println(bst.height());
+//        BinaryTrees.println(bst);
+//        bst.nonRecursivePre();
+//          BinaryTrees.println(bst);
+//          bst.nonRecursiveIn();
+//        BinaryTrees.println(bst);
+//        bst.nonRecursivePost();
 //        bst.inOrder();
 //        System.out.println("前驱"+bst.getElement(bst.predecessor(20)));
 //        System.out.println("后继"+bst.getElement(bst.successor(16)));
@@ -36,8 +47,8 @@ public class test {
 //        BinaryTrees.println(bst);
         //bst.remove();
 //        BinaryTrees.println(bst);
-        System.out.println("前序:");
-        bst.preOrder();
+//        System.out.println("前序:");
+//        bst.preOrder();
 //        System.out.println("中序:");
 //        bst.inOrder();
 //        System.out.println("后序:");
