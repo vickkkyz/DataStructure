@@ -2,7 +2,9 @@ package e_BST;
 
 import e_BST.printer.BinaryTrees;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -77,6 +79,7 @@ public class test {
 //        bst.add(p5);
 //        bst.add(p6);
 //        BinaryTrees.println(bst);
+
 
     }
 }
