@@ -35,7 +35,7 @@ public class test {
             bst.add((int) (Math.random() * 100));
         }
         BinaryTrees.println(bst);
-        System.out.println(bst.height()); 
+        System.out.println(bst.height());  
 //        BinaryTrees.println(bst);
 //        bst.nonRecursivePre();
 //          BinaryTrees.println(bst);
