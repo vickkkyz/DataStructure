@@ -113,9 +113,9 @@ public class RBTree<E> extends BSTImpl<E> {
             if(isRed(sibling)){
                 //兄弟不能借节点，那么让兄弟的儿子当做兄弟（它肯定是黑的） 借兄弟儿子的
                 leftRevolve(parent,sibling);
-                sibling = parent.right;
                 REDcolor(parent);
                 BLACKcolor(sibling);
+                sibling = parent.right;
 
             }
             //node的兄弟节点是黑色
