@@ -69,22 +69,22 @@ public class RBTree<E> extends BSTImpl<E> {
         if(isLeftChild(parent)){//L
             if(isLeftChild(node)){//LL
                 BLACKcolor(parent);
-                rightRevolve(grand,parent);
+                rightRevolve(grand);
             }else{//LR
                 BLACKcolor(node);
-                leftRevolve(parent,node);
-                rightRevolve(grand,node);
+                leftRevolve(parent);
+                rightRevolve(grand);
             }
             REDcolor(grand);
         }else{
             if(isLeftChild(node)){//RL
                 BLACKcolor(node);
-                rightRevolve(parent,node);
-                leftRevolve(grand,node);
+                rightRevolve(parent);
+                leftRevolve(grand);
 
             }else{//RR
                 BLACKcolor(parent);
-                leftRevolve(grand,parent);
+                leftRevolve(grand);
             }
             REDcolor(grand);
         }
@@ -112,24 +112,25 @@ public class RBTree<E> extends BSTImpl<E> {
         if(left){//与右孩子的操作反向就可以
             if(isRed(sibling)){
                 //兄弟不能借节点，那么让兄弟的儿子当做兄弟（它肯定是黑的） 借兄弟儿子的
-                leftRevolve(parent,sibling);
+                leftRevolve(parent);
                 REDcolor(parent);
                 BLACKcolor(sibling);
                 sibling = parent.right;
 
             }
+            //----------有一个问题，为什么sibling不会为null?--------
             //node的兄弟节点是黑色
             //sibling至少有一个红色节点
             if(isRed(sibling.left) || isRed(sibling.right)){
-                if(isBlack(sibling.left) && isRed(sibling.right)){
+                if(isBlack(sibling.right) && isRed(sibling.left)){
                     if(isRed(parent)){//上去的节点的颜色要和原来parent的颜色一样
                         REDcolor(sibling.left);
                     }else{
                         BLACKcolor(sibling.left);
                     }
                     BLACKcolor(parent);
-                    rightRevolve(sibling,sibling.left);
-                    leftRevolve(parent,sibling);
+                    rightRevolve(sibling);
+                    leftRevolve(parent);
                 }else if(isRed(sibling.right) && isBlack(sibling.left)){
                     if(isRed(parent)){//上去的节点的颜色要和原来parent的颜色一样
                         REDcolor(sibling);
@@ -138,7 +139,7 @@ public class RBTree<E> extends BSTImpl<E> {
                     }
                     BLACKcolor(parent);
                     BLACKcolor(sibling.right);
-                    leftRevolve(parent,sibling);
+                    leftRevolve(parent);
                 }else if(isRed(sibling.right) && isRed(sibling.left)){
                     if(isRed(parent)){//上去的节点的颜色要和原来parent的颜色一样
                         REDcolor(sibling);
@@ -147,12 +148,13 @@ public class RBTree<E> extends BSTImpl<E> {
                     }
                     BLACKcolor(parent);
                     BLACKcolor(sibling.right);
-                    leftRevolve(parent,sibling);
+                    leftRevolve(parent);
                 }
             }else{//sibling是一个黑色叶子节点，父节点下来与子节点合并
+                boolean pcolor = isBlack(parent);
                 BLACKcolor(parent);
                 REDcolor(sibling);
-                if(isBlack(parent)){
+                if(pcolor){
                     afterDelete(parent);
                 }
 
@@ -160,7 +162,7 @@ public class RBTree<E> extends BSTImpl<E> {
         }else{//删除的节点是右孩子
             if(isRed(sibling)){
                 //兄弟不能借节点，那么让兄弟的儿子当做兄弟（它肯定是黑的） 借兄弟儿子的
-                rightRevolve(parent,sibling);
+                rightRevolve(parent);
                 REDcolor(parent);
                 BLACKcolor(sibling);
                 sibling = parent.left;
@@ -175,8 +177,8 @@ public class RBTree<E> extends BSTImpl<E> {
                         BLACKcolor(sibling.right);
                     }
                     BLACKcolor(parent);
-                    leftRevolve(sibling,sibling.right);
-                    rightRevolve(parent,sibling);
+                    leftRevolve(sibling);
+                    rightRevolve(parent);
                 }else if(isRed(sibling.left) && isBlack(sibling.right)){
                     if(isRed(parent)){//上去的节点的颜色要和原来parent的颜色一样
                         REDcolor(sibling);
@@ -185,7 +187,7 @@ public class RBTree<E> extends BSTImpl<E> {
                     }
                     BLACKcolor(parent);
                     BLACKcolor(sibling.left);
-                    rightRevolve(parent,sibling);
+                    rightRevolve(parent);
                 }else if(isRed(sibling.left) && isRed(sibling.right)){
                     if(isRed(parent)){//上去的节点的颜色要和原来parent的颜色一样
                         REDcolor(sibling);
@@ -194,17 +196,18 @@ public class RBTree<E> extends BSTImpl<E> {
                     }
                     BLACKcolor(parent);
                     BLACKcolor(sibling.left);
-                    rightRevolve(parent,sibling);
+                    rightRevolve(parent);
                 }
             }else{//sibling是一个黑色叶子节点，父节点下来与子节点合并
+                boolean pcolor = isBlack(parent);
                 BLACKcolor(parent);
                 REDcolor(sibling);
-                if(isBlack(parent)){
+                if(pcolor){
                     afterDelete(parent);
                 }
 
             }
-    }
+        }
 
 
     }
@@ -256,10 +259,11 @@ public class RBTree<E> extends BSTImpl<E> {
     /**
      * 左旋
      * @param grand 要旋转的节点
-     * @param parent grand的右孩子
+     *  parent grand的右孩子
      */
-    private void leftRevolve(Node<E> grand,Node<E> parent){
+    private void leftRevolve(Node<E> grand){
         Node<E> grandParent = grand.parent;
+        Node<E> parent = grand.right;
         Node<E> parentLeft = parent.left;
         grand.right = parentLeft;
         parent.left = grand;
@@ -282,10 +286,11 @@ public class RBTree<E> extends BSTImpl<E> {
     /**
      * 右旋
      * @param grand 要旋转的节点
-     * @param parent grand的左孩子
+     * parent grand的左孩子
      */
-    private void rightRevolve(Node<E> grand, Node<E> parent){
+    private void rightRevolve(Node<E> grand){
         Node<E> grandParent = grand.parent;
+        Node<E> parent= grand.left;
         Node<E> parentRight = parent.right;
         grand.left = parentRight;
         parent.right = grand;
