@@ -51,6 +51,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
         if(root == null){//添加的是第一个节点
             root = createNode(element,null);
             afterAdd(root);
+            size++;
             return;
         }
         Node<E> node = root;
@@ -74,6 +75,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
         }else{
             NodeParent.left = newNode;
         }
+        size++;
         afterAdd(newNode);
     }
 
@@ -120,6 +122,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
                 }else if(node.parent.right == node){
                     node.parent.right = replacement;
                 }
+                size --;
                 afterDelete(replacement);
             }else{//度为0
                 if(node.parent.left == node){
@@ -127,6 +130,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
                 }else if(node.parent.right == node){
                     node.parent.right = null;
                 }
+                size --;
                 afterDelete(node);
             }
         }else{//删除的是根结点
@@ -141,6 +145,7 @@ public class BSTImpl<E> implements BST<E>, BinaryTreeInfo {
                     node.right.parent = null;
                 }
             }
+            size --;
             afterDelete(node);
         }
     }
