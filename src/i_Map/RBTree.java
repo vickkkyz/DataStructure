@@ -381,10 +381,10 @@ public class RBTree<K,V> {
         return getNode(key).value;
 
     }
-    List<Node<K,V>> list = new ArrayList<>();
+
     public String toString(){
+        List<Node<K,V>> list =  inOrder(root);
         StringBuffer sb = new StringBuffer();
-        inOrder(root);
         for(int i = 0; i < list.size(); i++){
             Node<K,V> node = list.get(i);
             K key = node.key;
@@ -397,13 +397,20 @@ public class RBTree<K,V> {
         return sb.toString();
     }
 
-    private void inOrder(Node<K,V> node){
+    private List<Node<K,V>> inOrder(Node<K,V> node){
+        List<Node<K,V>> list = new ArrayList<>();
+        return inOrder(list,node);
+    }
+    private List<Node<K,V>> inOrder(List<Node<K,V>> list,Node<K,V> node){
+
         if(node == null){
-            return;
+            return list;
         }
-        inOrder(node.left);
+        inOrder(list,node.left);
         list.add(node);
-        inOrder(node.right);
+        inOrder(list,node.right);
+
+        return list;
     }
     public void clear(){
         root = null;

@@ -12,5 +12,13 @@ public class test {
         map.put("王五",10);
         map.put("赵六",100);
         System.out.println(map);
+        System.out.println("size------" + map.size());
+        map.remove("张三");
+        System.out.println("------");
+        System.out.println(map);
+        System.out.println("size------" + map.size());
+        System.out.println(map.get("李四"));
+        System.out.println(map.containsKey("李四"));
+        System.out.println(map.containsValue(100));
     }
 }
