@@ -7,6 +7,7 @@ import g_RBTree.BSTImpl;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -147,15 +148,18 @@ public class RBTree<K,V> {
 
     private Node<K,V> getNodeValue(V value){
         checkelementnotnull(value);
-        Node<K,V> node = root;
-        while(node != null){
-            int cmp = compareV(value,node.value);
-            if(cmp > 0){
-                node = node.right;
-            }else if(cmp < 0){
-                node = node.left;
-            }else{
+        Queue<Node<K,V>> queue = new QueueImpl<>();
+        queue.enQueue(root);
+        while(!queue.isEmpty()){
+            Node<K,V> node = queue.deQueue();
+            if(Objects.equals(node.value,value)){
                 return node;
+            }
+            if(node.left != null){
+                queue.enQueue(node.left);
+            }
+            if(node.right != null){
+                queue.enQueue(node.right);
             }
         }
         return null;
