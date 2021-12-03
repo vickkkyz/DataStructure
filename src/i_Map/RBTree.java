@@ -57,7 +57,7 @@ public class RBTree<K,V> {
             root = createNode(key,value,null);
             afterAdd(root);
             size ++;
-            return value;
+            return null;
         }
         Node<K,V> node = root;
         Node<K,V> NodeParent = root;
