@@ -53,10 +53,17 @@ public class test {
         Asserts.test(map.get(new Key(6)) == null);
         Asserts.test(map.get(new Key(7)) == null);
         Asserts.test(map.get(new Key(8)) == 8);
-        map.print();
+        //map.print();
+        System.out.println(map);
+        System.out.println(map.containsValue(6));
     }
     public static void main(String agrs[]){
-       HashMap<Object,Integer> map = new HashMap<>();
+        HashMap<Object,Integer> map = new LinkedHashMap<>();
+//        HashMap<Object,Integer> map = new HashMap<>();
+//        for (int i = 0; i <= 30; i++) {
+//            map.put(i, i);
+//        }
+//        System.out.println(map);
 //        Person p1 = new Person("张三",1.2f,15);
 //        Person p2 = new Person("张三",1.2f,15);
 //        Person p3 = new Person("王五",1.6f,10);
@@ -67,6 +74,19 @@ public class test {
 //        map.put(p3,10);
 //        map.put(p4,20);
 //        map.put(p5,30);
+//        map.put(2,2);
+//        map.put(3,3);
+//        map.put(4,4);
+//        map.put(5,5);
+//        map.put(6,6);
+//        map.put(7,7);
+//        map.put(8,8);
+//        map.put(9,9);
+//        for (int i = 0; i <= 100; i++) {
+//            map.put(new Key(i), i + 5);
+//        }
+//        map.print();
+//        map.print();
 //        Key k1 = null;
 //        for(int i = 0; i < 15; i++){
 //            Key k = new Key(i);
@@ -77,7 +97,7 @@ public class test {
 //        System.out.println(map.size());
 //        System.out.println(map.containsValue(4));
 //        map.print();
-
+//
         test4(map);
     }
 }

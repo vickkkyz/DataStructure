@@ -11,17 +11,18 @@ import java.util.Objects;
  * @Date 2021/12/2
  */
 public class HashMap<K,V> implements Map<K,V> {
-    private int size;//HashTable中的元素的个数，而不是索引对应的数组的尺寸
+    protected int size;//HashTable中的元素的个数，而不是索引对应的数组的尺寸
     private Node[] table;
     public static final boolean BLACK = true;
     public static final boolean RED = false;
-    private static final int DEFATE_CAPACITY = 1 << 4;
+    private static final int DEFAULT_CAPACITY = 1 << 4;
+    private static final float DEFAULT_LOAD_FACTOR = 0.75f;//装填因子，等于节点总数/桶数组的长度
 
     public HashMap(){
-        table = new Node[DEFATE_CAPACITY];
+        table = new Node[DEFAULT_CAPACITY];
     }
 
-    private static class Node<K,V>{
+    protected static class Node<K,V>{
         K key;
         V value;
         int hash;
@@ -76,10 +77,10 @@ public class HashMap<K,V> implements Map<K,V> {
                     return true;
                 }
                 if(node1.left != null){
-                    queue.enQueue(node.left);
+                    queue.enQueue(node1.left);
                 }
                 if(node1.right != null){
-                    queue.enQueue(node.right);
+                    queue.enQueue(node1.right);
                 }
             }
         }
@@ -89,11 +90,13 @@ public class HashMap<K,V> implements Map<K,V> {
     //V为如果要添加的值在原来的哈希表里面有，就覆盖它，并返回被覆盖的node的value
     @Override
     public V put(K key, V value) {
+        resize();
         Node<K,V> root = table[index(key)];
         if(root == null){
-            table[index(key)] = new Node<K,V>(key,value,null);
+            table[index(key)] = createNode(key,value,null);
             afterAdd(table[index(key)]);//维护红黑树
             size ++;
+            addChain(table[index(key)]);
             return null;
         }
         int h1 = key == null ? 0 : key.hashCode();
@@ -109,6 +112,9 @@ public class HashMap<K,V> implements Map<K,V> {
             int h2 = node.hash;
             NodeParent = node;
             //res = compare(key,k2,h1,h2);
+            //如果不先判断哈希值大小，而是直接比较哈希值，每次新添加结点的时候第一次基本上都要进行扫描
+            //而如果判断哈希值，则先根据哈希值，就直接可以排除一半的节点，进入另一半，这时在根据哈希值，最后哈希值相等的时候，是在不行了再扫描，这时扫描的节点数就大大减少了
+            //而且根据哈希值排布节点不用每次都修复红黑树的性质，比原来好一点
             if(h1 > h2){
                 res = 1;
             }else if(h1 < h2){
@@ -154,9 +160,82 @@ public class HashMap<K,V> implements Map<K,V> {
         }
         size ++;
         afterAdd(newNode);
+        addChain(newNode);
         return null;
     }
+    //向节点上添加prev和next指针
+    protected void addChain(Node<K,V> node){}
+    private void resize(){
+        if(size / table.length < DEFAULT_LOAD_FACTOR) return;
+        System.out.println("扩容了--------------");
+        Node<K,V>[] oldtable = table;
+        table = new Node[oldtable.length << 1];
 
+        QueueImpl<Node<K,V>> queue = new QueueImpl<>();
+        for(int i = 0; i < oldtable.length; i++){
+            if (oldtable[i] == null) continue;
+            Node<K,V> node = oldtable[i];
+            queue.enQueue(node);
+            while(!queue.isEmpty()){
+                Node<K,V> node1 = queue.deQueue();
+                if(node1.left != null){
+                    queue.enQueue(node1.left);
+                }
+                if(node1.right != null){
+                    queue.enQueue(node1.right);
+                }
+                moveNode(node1);
+            }
+        }
+
+    }
+    private void moveNode(Node<K,V> newNode){
+        newNode.parent = null;
+        newNode.left  = null;
+        newNode.right = null;
+        newNode.color = RED;//注意现在所有节点都相当于是新加的结点，因此要染成红色
+
+        Node<K,V> root = table[index(newNode)];
+        if(root == null){
+            table[index(newNode)] = newNode;
+            afterAdd(table[index(newNode)]);//维护红黑树
+            return;
+        }
+        int h1 = newNode.hash;
+        Node<K,V> node = root;
+        Node<K,V> NodeParent = root;
+        K k1 = newNode.key;
+        int res = 0;
+        while(node != null){
+            K k2 = node.key;
+            int h2 = node.hash;
+            NodeParent = node;
+            if(h1 > h2){
+                res = 1;
+            }else if(h1 < h2){
+                res = -1;
+            }else{//肯定没有相等的节点，因此不用考虑res=0的情况
+                if(k1 != null && k2 != null && k1.getClass() == k2.getClass() && k1 instanceof Comparable && ((Comparable)k1).compareTo(k2) != 0){//类型相同
+                    res = ((Comparable)k1).compareTo(k2);
+                }else {
+                    res = System.identityHashCode(k1) - System.identityHashCode(k2);
+                }
+            }
+
+            if(res > 0){//往二叉树的右边加
+                node = node.right;
+            }else if(res < 0){
+                node = node.left;
+            }
+        }
+        newNode.parent = NodeParent;
+        if(res > 0){
+            NodeParent.right = newNode;
+        }else{
+            NodeParent.left = newNode;
+        }
+        afterAdd(newNode);
+    }
     @Override
     public V get(K key) {
         Node<K,V> node = node(key);
@@ -166,6 +245,8 @@ public class HashMap<K,V> implements Map<K,V> {
     @Override
     public V remove(K key) {
         Node<K,V> node = node(key);
+        Node<K,V> willNode = node;
+
         V oldvalue = node.value;
         if(node == null) return oldvalue;
         //删除的是度为2的节点，要找到它的前驱节点（或者它的后继结点），然后将前驱结点的值赋值到这个要删除的节点，然后将前驱节点删除
@@ -173,6 +254,8 @@ public class HashMap<K,V> implements Map<K,V> {
         if(hasTwoChildern(node)){
             Node<K,V> prenode = predecessor(key);
             node.key = prenode.key;
+            node.value = prenode.value;
+            node.hash = prenode.hash;
             node = prenode;//现在node是prenode,要把node删了
         }
 
@@ -213,9 +296,11 @@ public class HashMap<K,V> implements Map<K,V> {
             size --;
             afterDelete(node);
         }
+        removeChain(willNode,node);
         return oldvalue;
     }
 
+    protected void removeChain(Node<K,V> willNode,Node<K,V> removeNode){ }
     @Override
     public void clear() {
         if(size == 0) return;
@@ -258,7 +343,8 @@ public class HashMap<K,V> implements Map<K,V> {
             System.out.println("---------------------------------------");
         }
     }
-    private Node<K,V> createNode(K key, V value, Node<K,V> parent) {
+
+    protected Node<K,V> createNode(K key, V value, Node<K,V> parent) {
         return new Node<K,V>(key,value,parent);
     }
 
@@ -270,8 +356,7 @@ public class HashMap<K,V> implements Map<K,V> {
     //在以node为根结点的子树中，根据key找出对应的节点
     private Node<K,V> node(Node<K,V> node,K key){
         K k1 = key;
-        int h1 = k1 == null ? 0 : k1.hashCode();
-        h1 = h1 ^ (h1 >>> 16);
+        int h1 = node.hash;
         Node<K,V> resNode;//查找结果
         while(node != null){
             K k2 = node.key;
@@ -307,6 +392,10 @@ public class HashMap<K,V> implements Map<K,V> {
         return null;
     }
 
+    private int index(Node<K,V> node){
+        if(node == null) return 0;
+        return node.hash & (table.length - 1);
+    }
     //获取key对应的桶数组的索引
     private int index(K key){
         if(key == null){
